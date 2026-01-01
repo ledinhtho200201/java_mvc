@@ -2,10 +2,11 @@ package vn.pildo.laptopshop.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import vn.pildo.laptopshop.domain.User;
 import vn.pildo.laptopshop.service.UserService;
 
 @Controller
@@ -23,19 +24,17 @@ public class UserController {
         model.addAttribute("desc", "This is a description");
         return "hello";
     }
+
+    @RequestMapping("/admin/user")
+    public String getUserPage(Model model) {
+        model.addAttribute("newUser", new User());
+        return "admin/user/create";
+    }
+
+    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
+    public String createUser(Model model, @ModelAttribute("newUser") User newusercreated) {
+        System.out.println("Creating user..." + newusercreated);
+        // Handle user creation logic here
+        return "hello";
+    }
 }
-
-// @RestController
-// public class UserController {
-
-// private final UserService userService;
-
-// public UserController(UserService userService) {
-// this.userService = userService;
-// }
-
-// @GetMapping("")
-// public String getHomePage() {
-// return this.userService.handleHello();
-// }
-// }
