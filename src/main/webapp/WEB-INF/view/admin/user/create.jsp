@@ -13,7 +13,6 @@ uri="http://www.springframework.org/tags/form" prefix="form"%>
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link href="/resources/css/demo.css" rel="stylesheet" />
   </head>
   <body>
     <div class="container py-5">
