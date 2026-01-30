@@ -121,8 +121,10 @@ public class UserController {
             String message = isPro ? "Pro subscription activated" : "Pro subscription deactivated";
             return ResponseEntity.ok(message);
         } catch (Exception e) {
+            // Log the exception for debugging but don't expose details to client
+            System.err.println("Error updating pro status for user " + id + ": " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating pro status: " + e.getMessage());
+                    .body("Error updating pro status");
         }
     }
 
