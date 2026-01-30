@@ -1,5 +1,6 @@
 package vn.pildo.laptopshop.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +17,8 @@ public class User {
     private String fullName;
     private String address;
     private String phone;
+    @Column(name = "is_pro")
+    private boolean pro;
 
     public long getId() {
         return id;
@@ -65,6 +68,14 @@ public class User {
         this.phone = phone;
     }
 
+    public boolean isPro() {
+        return pro;
+    }
+
+    public void setPro(boolean pro) {
+        this.pro = pro;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -74,6 +85,7 @@ public class User {
                 ", fullName='" + fullName + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
+                ", isPro=" + pro +
                 '}';
     }
 

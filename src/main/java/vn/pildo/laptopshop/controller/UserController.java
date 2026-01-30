@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import vn.pildo.laptopshop.domain.User;
@@ -90,6 +91,67 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting user: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/user/{id}/pro-status")
+    @ResponseBody
+    public ResponseEntity<ProStatusResponse> checkProStatus(@PathVariable Long id) {
+        User user = this.userService.getUserById(id);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ProStatusResponse(false, "User not found"));
+        }
+        boolean isPro = user.isPro();
+        String message = isPro ? "User has pro subscription" : "User does not have pro subscription";
+        return ResponseEntity.ok(new ProStatusResponse(isPro, message));
+    }
+
+    @PostMapping("/api/user/{id}/pro-status")
+    @ResponseBody
+    public ResponseEntity<String> updateProStatus(@PathVariable Long id, @RequestParam("isPro") boolean isPro) {
+        try {
+            User user = this.userService.getUserById(id);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User not found");
+            }
+            user.setPro(isPro);
+            this.userService.handleSaveUser(user);
+            String message = isPro ? "Pro subscription activated" : "Pro subscription deactivated";
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            // Log the exception for debugging but don't expose details to client
+            System.err.println("Error updating pro status for user " + id + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating pro status");
+        }
+    }
+
+    // Inner class for response
+    public static class ProStatusResponse {
+        private boolean isPro;
+        private String message;
+
+        public ProStatusResponse(boolean isPro, String message) {
+            this.isPro = isPro;
+            this.message = message;
+        }
+
+        public boolean isPro() {
+            return isPro;
+        }
+
+        public void setIsPro(boolean isPro) {
+            this.isPro = isPro;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }
