@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import vn.pildo.laptopshop.domain.User;
@@ -108,15 +109,15 @@ public class UserController {
 
     @PostMapping("/api/user/{id}/pro-status")
     @ResponseBody
-    public ResponseEntity<String> updateProStatus(@PathVariable Long id, @ModelAttribute ProStatusRequest request) {
+    public ResponseEntity<String> updateProStatus(@PathVariable Long id, @RequestParam("isPro") boolean isPro) {
         try {
             User user = this.userService.getUserById(id);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("User not found");
             }
-            this.userService.updateUserProStatus(id, request.getIsPro());
-            String message = request.getIsPro() ? "Pro subscription activated" : "Pro subscription deactivated";
+            this.userService.updateUserProStatus(id, isPro);
+            String message = isPro ? "Pro subscription activated" : "Pro subscription deactivated";
             return ResponseEntity.ok(message);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -124,7 +125,7 @@ public class UserController {
         }
     }
 
-    // Inner classes for response/request
+    // Inner class for response
     public static class ProStatusResponse {
         private boolean isPro;
         private String message;
@@ -148,18 +149,6 @@ public class UserController {
 
         public void setMessage(String message) {
             this.message = message;
-        }
-    }
-
-    public static class ProStatusRequest {
-        private boolean isPro;
-
-        public boolean getIsPro() {
-            return isPro;
-        }
-
-        public void setIsPro(boolean isPro) {
-            this.isPro = isPro;
         }
     }
 }
