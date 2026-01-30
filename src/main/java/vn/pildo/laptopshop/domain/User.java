@@ -16,6 +16,7 @@ public class User {
     private String fullName;
     private String address;
     private String phone;
+    private boolean isPro;
 
     public long getId() {
         return id;
@@ -65,6 +66,14 @@ public class User {
         this.phone = phone;
     }
 
+    public boolean isPro() {
+        return isPro;
+    }
+
+    public void setPro(boolean isPro) {
+        this.isPro = isPro;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -74,6 +83,7 @@ public class User {
                 ", fullName='" + fullName + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
+                ", isPro=" + isPro +
                 '}';
     }
 

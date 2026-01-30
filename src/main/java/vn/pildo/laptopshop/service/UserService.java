@@ -57,6 +57,23 @@ public class UserService {
             System.out.println("User not found: " + id);
         }
     }
+
+    public boolean checkUserProStatus(Long id) {
+        User user = getUserById(id);
+        if (user != null) {
+            return user.isPro();
+        }
+        return false;
+    }
+
+    public void updateUserProStatus(Long id, boolean isPro) {
+        User user = getUserById(id);
+        if (user != null) {
+            user.setPro(isPro);
+            userRepository.save(user);
+            System.out.println("User pro status updated: " + id + " -> " + isPro);
+        }
+    }
 }
 
 

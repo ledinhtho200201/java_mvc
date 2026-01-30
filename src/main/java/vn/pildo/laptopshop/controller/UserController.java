@@ -92,4 +92,74 @@ public class UserController {
                     .body("Error deleting user: " + e.getMessage());
         }
     }
+
+    @GetMapping("/api/user/{id}/pro-status")
+    @ResponseBody
+    public ResponseEntity<ProStatusResponse> checkProStatus(@PathVariable Long id) {
+        User user = this.userService.getUserById(id);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ProStatusResponse(false, "User not found"));
+        }
+        boolean isPro = this.userService.checkUserProStatus(id);
+        String message = isPro ? "User has pro subscription" : "User does not have pro subscription";
+        return ResponseEntity.ok(new ProStatusResponse(isPro, message));
+    }
+
+    @PostMapping("/api/user/{id}/pro-status")
+    @ResponseBody
+    public ResponseEntity<String> updateProStatus(@PathVariable Long id, @ModelAttribute ProStatusRequest request) {
+        try {
+            User user = this.userService.getUserById(id);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User not found");
+            }
+            this.userService.updateUserProStatus(id, request.getIsPro());
+            String message = request.getIsPro() ? "Pro subscription activated" : "Pro subscription deactivated";
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating pro status: " + e.getMessage());
+        }
+    }
+
+    // Inner classes for response/request
+    public static class ProStatusResponse {
+        private boolean isPro;
+        private String message;
+
+        public ProStatusResponse(boolean isPro, String message) {
+            this.isPro = isPro;
+            this.message = message;
+        }
+
+        public boolean getIsPro() {
+            return isPro;
+        }
+
+        public void setIsPro(boolean isPro) {
+            this.isPro = isPro;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    public static class ProStatusRequest {
+        private boolean isPro;
+
+        public boolean getIsPro() {
+            return isPro;
+        }
+
+        public void setIsPro(boolean isPro) {
+            this.isPro = isPro;
+        }
+    }
 }
