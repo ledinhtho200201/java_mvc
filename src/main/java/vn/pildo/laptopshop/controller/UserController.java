@@ -102,7 +102,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ProStatusResponse(false, "User not found"));
         }
-        boolean isPro = this.userService.checkUserProStatus(id);
+        boolean isPro = user.isPro();
         String message = isPro ? "User has pro subscription" : "User does not have pro subscription";
         return ResponseEntity.ok(new ProStatusResponse(isPro, message));
     }
@@ -116,7 +116,8 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("User not found");
             }
-            this.userService.updateUserProStatus(id, isPro);
+            user.setPro(isPro);
+            this.userService.handleSaveUser(user);
             String message = isPro ? "Pro subscription activated" : "Pro subscription deactivated";
             return ResponseEntity.ok(message);
         } catch (Exception e) {
@@ -135,7 +136,7 @@ public class UserController {
             this.message = message;
         }
 
-        public boolean getIsPro() {
+        public boolean isPro() {
             return isPro;
         }
 
