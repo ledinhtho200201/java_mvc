@@ -1,4 +1,4 @@
-package vn.pildo.laptopshop.controller;
+package vn.pildo.laptopshop.controller.admin;
 
 import java.util.List;
 
@@ -28,13 +28,13 @@ public class UserController {
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
-        List<User> arrUsers = this.userService.getAllUsers();
-        List<User> arrUsersByEmail = this.userService.getAllUserByEmail("a@gmail.com");
+        // List<User> arrUsers = this.userService.getAllUsers();
+        // List<User> arrUsersByEmail = this.userService.getAllUserByEmail("a@gmail.com");
 
-        String test = this.userService.handleHello();
-        model.addAttribute("message", test);
-        model.addAttribute("desc", "This is a description");
-        return "hello";
+        // String test = this.userService.handleHello();
+        // model.addAttribute("message", test);
+        // model.addAttribute("desc", "This is a description");
+        return "client/show";
     }
 
     @RequestMapping("/admin/user")
