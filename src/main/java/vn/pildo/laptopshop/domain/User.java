@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -17,6 +18,10 @@ public class User {
 
     @NotEmpty(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
+    @Pattern(
+        regexp = "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$",
+        message = "Email không đúng định dạng"
+    )
     private String email;
 
     @NotEmpty(message = "Password không được để trống")

@@ -78,6 +78,10 @@ public class UserService {
         return passwordEncoder.encode(plainPassword);
     }
 
+    public boolean isEmailExist(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
     public void deleteUser(Long id) {
         // Cách 1: Delete trực tiếp
         // userRepository.deleteById(id);

@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import vn.pildo.laptopshop.domain.User;
 import vn.pildo.laptopshop.service.UserService;
+import org.springframework.validation.FieldError;
 
 @Controller
 public class UserController {
@@ -96,6 +97,12 @@ public class UserController {
             @RequestParam("avatarFile") MultipartFile avatarFile) {
 
         if (bindingResult.hasErrors()) {
+            return "admin/user/create";
+        }
+
+        // Validate email trùng
+        if (this.userService.isEmailExist(newUser.getEmail())) {
+            bindingResult.addError(new FieldError("newUser", "email", "Email đã tồn tại trong hệ thống"));
             return "admin/user/create";
         }
 
