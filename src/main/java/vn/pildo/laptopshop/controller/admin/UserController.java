@@ -31,17 +31,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("/")
-    public String getHomePage(Model model) {
-        // List<User> arrUsers = this.userService.getAllUsers();
-        // List<User> arrUsersByEmail = this.userService.getAllUserByEmail("a@gmail.com");
-
-        // String test = this.userService.handleHello();
-        // model.addAttribute("message", test);
-        // model.addAttribute("desc", "This is a description");
-        return "client/show";
-    }
-
     @RequestMapping("/admin/user")
     public String getListUser(Model model) {
         List<User> users = this.userService.getAllUsers();
