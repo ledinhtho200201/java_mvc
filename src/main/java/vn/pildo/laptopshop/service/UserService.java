@@ -2,17 +2,28 @@ package vn.pildo.laptopshop.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import vn.pildo.laptopshop.domain.User;
 import vn.pildo.laptopshop.repository.UserRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+import java.nio.file.StandardCopyOption;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     public String handleHello() {
         return "Hello from UserService!";
@@ -21,15 +32,15 @@ public class UserService {
         return this.userRepository.findAll();
     }
     public void updateUserById(User user) {
-         // Kiểm tra user có tồn tại không
         User existingUser = getUserById(user.getId());
         if (existingUser != null) {
-            // Cập nhật các trường
             existingUser.setFullName(user.getFullName());
-            existingUser.setEmail(user.getEmail());
             existingUser.setPhone(user.getPhone());
             existingUser.setAddress(user.getAddress());
-            
+            existingUser.setRole(user.getRole());
+            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                existingUser.setAvatar(user.getAvatar());
+            }
             userRepository.save(existingUser);
         }
     }
@@ -43,6 +54,28 @@ public class UserService {
         User pildo = this.userRepository.save(user);
         System.out.println("Saving user..." + pildo);
         return pildo;
+    }
+
+    public String handleUploadFile(MultipartFile file, String uploadDir) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : "";
+        String newFilename = UUID.randomUUID().toString() + extension;
+
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Files.copy(file.getInputStream(), uploadPath.resolve(newFilename), StandardCopyOption.REPLACE_EXISTING);
+        return newFilename;
+    }
+
+    public String hashPassword(String plainPassword) {
+        return passwordEncoder.encode(plainPassword);
     }
 
     public void deleteUser(Long id) {

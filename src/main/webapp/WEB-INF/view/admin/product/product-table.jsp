@@ -339,15 +339,15 @@
 
 <!-- ====================== SIDEBAR ====================== -->
 <aside class="sidebar">
-    <a href="/" class="sidebar-brand"><i class="bi bi-laptop me-2"></i>Laptop<span>Shop</span></a>
+    <a href="/admin/dashboard" class="sidebar-brand"><i class="bi bi-laptop me-2"></i>Laptop<span>Shop</span></a>
 
     <div class="sidebar-label">Tổng quan</div>
-    <a href="#" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="/admin/dashboard" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
 
     <div class="sidebar-label">Quản lý</div>
     <a href="/admin/product" class="sidebar-link active"><i class="bi bi-box-seam"></i> Sản phẩm</a>
     <a href="/admin/user" class="sidebar-link"><i class="bi bi-people"></i> Người dùng</a>
-    <a href="#" class="sidebar-link"><i class="bi bi-cart3"></i> Đơn hàng</a>
+    <a href="/admin/order" class="sidebar-link"><i class="bi bi-cart3"></i> Đơn hàng</a>
 
     <div class="sidebar-label">Hệ thống</div>
     <a href="#" class="sidebar-link"><i class="bi bi-gear"></i> Cài đặt</a>

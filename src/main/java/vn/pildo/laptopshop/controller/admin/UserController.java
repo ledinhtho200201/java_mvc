@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,8 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import vn.pildo.laptopshop.domain.User;
 import vn.pildo.laptopshop.service.UserService;
 
@@ -54,7 +58,18 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String updateUser(@ModelAttribute User user) {
+    public String updateUser(
+            @ModelAttribute User user,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile) {
+        try {
+            if (avatarFile != null && !avatarFile.isEmpty()) {
+                String uploadDir = "src/main/resources/static/images/avatar";
+                String avatarName = this.userService.handleUploadFile(avatarFile, uploadDir);
+                if (avatarName != null) {
+                    user.setAvatar(avatarName);
+                }
+            }
+        } catch (Exception ignored) {}
         userService.updateUserById(user);
         return "redirect:/admin/user";
     }
@@ -74,10 +89,31 @@ public class UserController {
     }
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUser(Model model, @ModelAttribute("newUser") User newusercreated) {
-        System.out.println("Creating user..." + newusercreated);
-        this.userService.handleSaveUser(newusercreated);
-        // Handle user creation logic here
+    public String createUser(
+            Model model,
+            @Valid @ModelAttribute("newUser") User newUser,
+            BindingResult bindingResult,
+            @RequestParam("avatarFile") MultipartFile avatarFile) {
+
+        if (bindingResult.hasErrors()) {
+            return "admin/user/create";
+        }
+
+        try {
+            String uploadDir = "src/main/resources/static/images/avatar";
+            String avatarName = this.userService.handleUploadFile(avatarFile, uploadDir);
+            if (avatarName != null) {
+                newUser.setAvatar(avatarName);
+            }
+        } catch (Exception e) {
+            model.addAttribute("uploadError", "Upload ảnh thất bại: " + e.getMessage());
+            return "admin/user/create";
+        }
+
+        String hashedPassword = this.userService.hashPassword(newUser.getPassword());
+        newUser.setPassword(hashedPassword);
+
+        this.userService.handleSaveUser(newUser);
         return "redirect:/admin/user";
     }
 
