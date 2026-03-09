@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!-- =============================================
      FEATURES / SERVICES BAR
@@ -145,164 +146,52 @@
 
         <div class="row g-4">
 
-            <!-- Product 1 -->
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <span class="badge-sale">-15%</span>
-                        <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
-                        <svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="5" width="140" height="88" rx="6" fill="#1a1a2e"/>
-                            <rect x="16" y="11" width="128" height="76" rx="4" fill="#0d1117"/>
-                            <rect x="20" y="15" width="120" height="68" rx="3" fill="linear-gradient(135deg,#e94560,#0f3460)"/>
-                            <rect x="20" y="15" width="120" height="68" rx="3" fill="#e94560" opacity="0.15"/>
-                            <text x="80" y="52" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">ASUS ROG</text>
-                            <text x="80" y="66" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">Strix G16 RTX4070</text>
-                            <rect x="5" y="92" width="150" height="16" rx="3" fill="#1a1a2e"/>
-                            <rect x="55" y="96" width="50" height="8" rx="2" fill="#2d3748"/>
-                        </svg>
-                    </div>
-                    <div class="product-body">
-                        <div class="product-brand">ASUS ROG</div>
-                        <div class="product-name">ASUS ROG Strix G16 Gaming RTX 4070 165Hz</div>
-                        <div class="product-specs">
-                            <span class="product-spec-tag">Intel i9-13980HX</span>
-                            <span class="product-spec-tag">16GB DDR5</span>
-                            <span class="product-spec-tag">1TB SSD</span>
+            <c:forEach var="product" items="${products}">
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="product-card">
+                        <div class="product-img-wrap">
+                            <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
+                            <a href="/product/${product.id}">
+                                <c:choose>
+                                    <c:when test="${not empty product.image}">
+                                        <img src="/images/product/${product.image}" alt="${product.name}"
+                                             style="width:100%;height:160px;object-fit:cover;"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div style="width:100%;height:160px;display:flex;align-items:center;justify-content:center;background:#f4f6fb;color:#ccc;font-size:2.5rem;">
+                                            <i class="bi bi-laptop"></i>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </a>
                         </div>
-                        <div class="product-rating">
-                            <span class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
-                            <span class="review-count">(128)</span>
-                        </div>
-                        <div class="product-price-wrap">
-                            <div>
-                                <span class="product-price-old">48.990.000đ</span>
-                                <span class="product-price">41.641.000đ</span>
+                        <div class="product-body">
+                            <div class="product-brand">${product.factory}</div>
+                            <a href="/product/${product.id}" class="product-name" style="text-decoration:none;color:inherit;">${product.name}</a>
+                            <div class="product-specs">
+                                <c:if test="${not empty product.shortDesc}">
+                                    <span class="product-spec-tag">${product.shortDesc}</span>
+                                </c:if>
                             </div>
-                            <button class="btn-add-cart"><i class="bi bi-cart-plus"></i></button>
+                            <div class="product-price-wrap">
+                                <div>
+                                    <span class="product-price">
+                                        <fmt:formatNumber value="${product.price}" type="number" groupingUsed="true"/>đ
+                                    </span>
+                                </div>
+                                <button class="btn-add-cart"><i class="bi bi-cart-plus"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </c:forEach>
 
-            <!-- Product 2 -->
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <span class="badge-new">Mới</span>
-                        <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
-                        <svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="5" width="140" height="88" rx="6" fill="#c0c0c0"/>
-                            <rect x="16" y="11" width="128" height="76" rx="4" fill="#1a1a1a"/>
-                            <rect x="20" y="15" width="120" height="68" rx="3" fill="#2d2d2d"/>
-                            <circle cx="80" cy="49" r="12" fill="#e94560" opacity="0.8"/>
-                            <text x="80" y="54" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">M</text>
-                            <text x="80" y="70" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">MacBook Pro M3</text>
-                            <rect x="5" y="92" width="150" height="16" rx="3" fill="#c0c0c0"/>
-                            <rect x="55" y="96" width="50" height="8" rx="2" fill="#a0a0a0"/>
-                        </svg>
-                    </div>
-                    <div class="product-body">
-                        <div class="product-brand">Apple</div>
-                        <div class="product-name">MacBook Pro 14 inch M3 Pro 2024</div>
-                        <div class="product-specs">
-                            <span class="product-spec-tag">M3 Pro</span>
-                            <span class="product-spec-tag">18GB RAM</span>
-                            <span class="product-spec-tag">512GB SSD</span>
-                        </div>
-                        <div class="product-rating">
-                            <span class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
-                            <span class="review-count">(256)</span>
-                        </div>
-                        <div class="product-price-wrap">
-                            <div>
-                                <span class="product-price-old">&nbsp;</span>
-                                <span class="product-price">52.990.000đ</span>
-                            </div>
-                            <button class="btn-add-cart"><i class="bi bi-cart-plus"></i></button>
-                        </div>
-                    </div>
+            <c:if test="${empty products}">
+                <div class="col-12 text-center py-5" style="color:#9ca3af;">
+                    <i class="bi bi-box-seam" style="font-size:3rem;"></i>
+                    <p class="mt-2">Chưa có sản phẩm nào.</p>
                 </div>
-            </div>
-
-            <!-- Product 3 -->
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <span class="badge-sale">-20%</span>
-                        <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
-                        <svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="5" width="140" height="88" rx="6" fill="#2c2c2c"/>
-                            <rect x="16" y="11" width="128" height="76" rx="4" fill="#0d1117"/>
-                            <rect x="20" y="15" width="120" height="68" rx="3" fill="#1a1a2e"/>
-                            <text x="80" y="46" font-family="Arial" font-size="10" font-weight="bold" fill="#00aeff" text-anchor="middle">ThinkPad</text>
-                            <text x="80" y="60" font-family="Arial" font-size="9" fill="rgba(255,255,255,0.8)" text-anchor="middle">X1 Carbon</text>
-                            <text x="80" y="72" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.5)" text-anchor="middle">Gen 12</text>
-                            <rect x="5" y="92" width="150" height="16" rx="3" fill="#2c2c2c"/>
-                            <rect x="55" y="96" width="50" height="8" rx="2" fill="#3d3d3d"/>
-                        </svg>
-                    </div>
-                    <div class="product-body">
-                        <div class="product-brand">Lenovo</div>
-                        <div class="product-name">Lenovo ThinkPad X1 Carbon Gen 12 Ultrabook</div>
-                        <div class="product-specs">
-                            <span class="product-spec-tag">Intel Ultra 7</span>
-                            <span class="product-spec-tag">32GB LPDDR5</span>
-                            <span class="product-spec-tag">1TB SSD</span>
-                        </div>
-                        <div class="product-rating">
-                            <span class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i></span>
-                            <span class="review-count">(74)</span>
-                        </div>
-                        <div class="product-price-wrap">
-                            <div>
-                                <span class="product-price-old">45.500.000đ</span>
-                                <span class="product-price">36.400.000đ</span>
-                            </div>
-                            <button class="btn-add-cart"><i class="bi bi-cart-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product 4 -->
-            <div class="col-6 col-md-4 col-lg-3">
-                <div class="product-card">
-                    <div class="product-img-wrap">
-                        <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
-                        <svg width="160" height="110" viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="5" width="140" height="88" rx="6" fill="#1a1a2e"/>
-                            <rect x="16" y="11" width="128" height="76" rx="4" fill="#0d1117"/>
-                            <rect x="20" y="15" width="120" height="68" rx="3" fill="#0f3460"/>
-                            <text x="80" y="46" font-family="Arial" font-size="9" font-weight="bold" fill="#ffd700" text-anchor="middle">HP OMEN</text>
-                            <text x="80" y="60" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.8)" text-anchor="middle">16 RTX 4060</text>
-                            <text x="80" y="72" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.5)" text-anchor="middle">QHD 165Hz</text>
-                            <rect x="5" y="92" width="150" height="16" rx="3" fill="#1a1a2e"/>
-                            <rect x="55" y="96" width="50" height="8" rx="2" fill="#2d3748"/>
-                        </svg>
-                    </div>
-                    <div class="product-body">
-                        <div class="product-brand">HP</div>
-                        <div class="product-name">HP OMEN 16 Gaming RTX 4060 QHD 165Hz</div>
-                        <div class="product-specs">
-                            <span class="product-spec-tag">AMD Ryzen 7</span>
-                            <span class="product-spec-tag">16GB DDR5</span>
-                            <span class="product-spec-tag">512GB SSD</span>
-                        </div>
-                        <div class="product-rating">
-                            <span class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
-                            <span class="review-count">(93)</span>
-                        </div>
-                        <div class="product-price-wrap">
-                            <div>
-                                <span class="product-price-old">&nbsp;</span>
-                                <span class="product-price">32.990.000đ</span>
-                            </div>
-                            <button class="btn-add-cart"><i class="bi bi-cart-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </c:if>
 
         </div>
 
