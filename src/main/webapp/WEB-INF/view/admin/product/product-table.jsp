@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -262,7 +264,34 @@
             outline: none;
         }
 
-        .form-control-admin.is-invalid { border-color: #dc2626; }
+        .form-control-admin.is-invalid,
+        .form-select-admin.is-invalid {
+            border-color: #dc2626;
+            padding-right: 2.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23dc2626' viewBox='0 0 16 16'%3E%3Cpath d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16'/%3E%3Cpath d='M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem 1rem;
+        }
+        .form-control-admin.is-invalid:focus,
+        .form-select-admin.is-invalid:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+        }
+        .error-msg {
+            font-size: 0.78rem;
+            color: #dc2626;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .error-msg::before {
+            content: "\F33A";
+            font-family: "bootstrap-icons";
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
 
         .upload-area {
             border: 2px dashed #e5e7eb;
@@ -448,7 +477,7 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty product.image}">
-                                                    <img src="/images/${product.image}" alt="${product.name}" class="product-thumb"/>
+                                                    <img src="/images/product/${product.image}" alt="${product.name}" class="product-thumb"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <div class="product-thumb-placeholder"><i class="bi bi-image"></i></div>
@@ -508,76 +537,89 @@
             </div>
 
             <div class="modal-body">
-                <form id="createProductForm" action="/admin/product/create" method="post" enctype="multipart/form-data" novalidate>
+                <form:form id="createProductForm" action="/admin/product/create" method="post"
+                           modelAttribute="newProduct" enctype="multipart/form-data" novalidate="true">
 
                     <div class="row g-3">
 
                         <!-- Tên sản phẩm -->
                         <div class="col-12">
                             <label class="form-label-admin">Tên sản phẩm <span class="required">*</span></label>
-                            <input type="text" name="name" class="form-control form-control-admin"
-                                   placeholder="VD: ASUS ROG Strix G16 Gaming RTX 4070" required>
-                            <div class="invalid-feedback">Vui lòng nhập tên sản phẩm.</div>
+                            <form:input type="text" path="name"
+                                       cssClass="form-control form-control-admin"
+                                       cssErrorClass="form-control form-control-admin is-invalid"
+                                       placeholder="VD: ASUS ROG Strix G16 Gaming RTX 4070"/>
+                            <form:errors path="name" cssClass="error-msg"/>
                         </div>
 
                         <!-- Giá + Số lượng -->
                         <div class="col-md-6">
                             <label class="form-label-admin">Giá (VNĐ) <span class="required">*</span></label>
-                            <input type="number" name="price" class="form-control form-control-admin"
-                                   placeholder="VD: 35990000" min="0" required>
-                            <div class="invalid-feedback">Vui lòng nhập giá sản phẩm.</div>
+                            <form:input type="number" path="price"
+                                       cssClass="form-control form-control-admin"
+                                       cssErrorClass="form-control form-control-admin is-invalid"
+                                       placeholder="VD: 35990000"/>
+                            <form:errors path="price" cssClass="error-msg"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label-admin">Số lượng <span class="required">*</span></label>
-                            <input type="number" name="quantity" class="form-control form-control-admin"
-                                   placeholder="VD: 50" min="0" required>
-                            <div class="invalid-feedback">Vui lòng nhập số lượng.</div>
+                            <form:input type="number" path="quantity"
+                                       cssClass="form-control form-control-admin"
+                                       cssErrorClass="form-control form-control-admin is-invalid"
+                                       placeholder="VD: 50"/>
+                            <form:errors path="quantity" cssClass="error-msg"/>
                         </div>
 
                         <!-- Nhà sản xuất + Mục đích -->
                         <div class="col-md-6">
                             <label class="form-label-admin">Nhà sản xuất <span class="required">*</span></label>
-                            <select name="factory" class="form-select form-select-admin form-control-admin" required>
-                                <option value="" disabled selected>-- Chọn hãng --</option>
-                                <option value="ASUS">ASUS</option>
-                                <option value="Lenovo">Lenovo</option>
-                                <option value="Dell">Dell</option>
-                                <option value="HP">HP</option>
-                                <option value="Apple">Apple</option>
-                                <option value="Acer">Acer</option>
-                                <option value="MSI">MSI</option>
-                                <option value="Samsung">Samsung</option>
-                                <option value="LG">LG</option>
-                                <option value="Khác">Khác</option>
-                            </select>
-                            <div class="invalid-feedback">Vui lòng chọn nhà sản xuất.</div>
+                            <form:select path="factory"
+                                       cssClass="form-select form-select-admin form-control-admin"
+                                       cssErrorClass="form-select form-select-admin form-control-admin is-invalid">
+                                <form:option value="" label="-- Chọn hãng --"/>
+                                <form:option value="ASUS" label="ASUS"/>
+                                <form:option value="Lenovo" label="Lenovo"/>
+                                <form:option value="Dell" label="Dell"/>
+                                <form:option value="HP" label="HP"/>
+                                <form:option value="Apple" label="Apple"/>
+                                <form:option value="Acer" label="Acer"/>
+                                <form:option value="MSI" label="MSI"/>
+                                <form:option value="Samsung" label="Samsung"/>
+                                <form:option value="LG" label="LG"/>
+                                <form:option value="Khác" label="Khác"/>
+                            </form:select>
+                            <form:errors path="factory" cssClass="error-msg"/>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label-admin">Mục đích sử dụng <span class="required">*</span></label>
-                            <select name="target" class="form-select form-select-admin form-control-admin" required>
-                                <option value="" disabled selected>-- Chọn mục đích --</option>
-                                <option value="Gaming">Gaming</option>
-                                <option value="Văn phòng">Văn phòng</option>
-                                <option value="Đồ họa">Đồ họa</option>
-                                <option value="Học sinh - Sinh viên">Học sinh - Sinh viên</option>
-                                <option value="Doanh nhân">Doanh nhân</option>
-                                <option value="Workstation">Workstation</option>
-                            </select>
-                            <div class="invalid-feedback">Vui lòng chọn mục đích sử dụng.</div>
+                            <form:select path="target"
+                                       cssClass="form-select form-select-admin form-control-admin"
+                                       cssErrorClass="form-select form-select-admin form-control-admin is-invalid">
+                                <form:option value="" label="-- Chọn mục đích --"/>
+                                <form:option value="Gaming" label="Gaming"/>
+                                <form:option value="Văn phòng" label="Văn phòng"/>
+                                <form:option value="Đồ họa" label="Đồ họa"/>
+                                <form:option value="Học sinh - Sinh viên" label="Học sinh - Sinh viên"/>
+                                <form:option value="Doanh nhân" label="Doanh nhân"/>
+                                <form:option value="Workstation" label="Workstation"/>
+                            </form:select>
+                            <form:errors path="target" cssClass="error-msg"/>
                         </div>
 
                         <!-- Mô tả ngắn -->
                         <div class="col-12">
                             <label class="form-label-admin">Mô tả ngắn</label>
-                            <input type="text" name="shortDesc" class="form-control form-control-admin"
-                                   placeholder="VD: Intel i9, 16GB DDR5, 1TB SSD, 165Hz">
+                            <form:input type="text" path="shortDesc"
+                                       cssClass="form-control form-control-admin"
+                                       placeholder="VD: Intel i9, 16GB DDR5, 1TB SSD, 165Hz"/>
                         </div>
 
                         <!-- Mô tả chi tiết -->
                         <div class="col-12">
                             <label class="form-label-admin">Mô tả chi tiết</label>
-                            <textarea name="detailDesc" class="form-control form-control-admin"
-                                      rows="4" placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
+                            <form:textarea path="detailDesc"
+                                          cssClass="form-control form-control-admin"
+                                          rows="4" placeholder="Nhập mô tả chi tiết về sản phẩm..."/>
                         </div>
 
                         <!-- Ảnh sản phẩm -->
@@ -588,19 +630,19 @@
                                 <div id="uploadText" style="font-size:.85rem;color:#6b7080;margin-top:.4rem;">
                                     Nhấn để chọn ảnh hoặc kéo thả vào đây
                                 </div>
-                                <small>PNG, JPG, WEBP — tối đa 5MB</small>
+                                <small>PNG, JPG, WEBP — tối đa 10MB</small>
                                 <img id="imagePreview" src="" alt="Preview"/>
                             </div>
-                            <input type="file" id="imageInput" name="image" accept="image/*" style="display:none;">
+                            <input type="file" id="imageInput" name="imageFile" accept="image/*" style="display:none;">
                         </div>
 
                     </div><!-- /row -->
-                </form>
+                </form:form>
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-submit" id="submitProductBtn">
+                <button type="submit" form="createProductForm" class="btn btn-submit">
                     <i class="bi bi-check-lg me-1"></i>Lưu sản phẩm
                 </button>
             </div>
@@ -668,20 +710,18 @@ $(function () {
     });
 
     /* ---- FORM SUBMIT ---- */
-    $('#submitProductBtn').on('click', function () {
-        const form = document.getElementById('createProductForm');
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            return;
-        }
-        form.submit();
-    });
+    // Auto-open modal if server-side validation failed
+    <c:if test="${showModal}">
+        new bootstrap.Modal(document.getElementById('createProductModal')).show();
+    </c:if>
 
-    // Reset validation on modal close
+    // Reset on modal close
     $('#createProductModal').on('hidden.bs.modal', function () {
         const form = document.getElementById('createProductForm');
         form.reset();
-        form.classList.remove('was-validated');
+        // Remove is-invalid classes
+        $(form).find('.is-invalid').removeClass('is-invalid');
+        $(form).find('.error-msg').hide();
         preview.style.display = 'none';
         uploadIcon.style.display = '';
         uploadText.textContent = 'Nhấn để chọn ảnh hoặc kéo thả vào đây';

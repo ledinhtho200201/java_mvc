@@ -7,22 +7,25 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import vn.pildo.laptopshop.domain.User;
+import vn.pildo.laptopshop.service.ProductService;
 import vn.pildo.laptopshop.service.UserService;
 
 @Controller
 public class DashboardController {
 
     private final UserService userService;
+    private final ProductService productService;
 
-    public DashboardController(UserService userService) {
+    public DashboardController(UserService userService, ProductService productService) {
         this.userService = userService;
+        this.productService = productService;
     }
 
     @GetMapping("/admin/dashboard")
     public String getDashboard(Model model) {
         List<User> allUsers = this.userService.getAllUsers();
         model.addAttribute("userCount", allUsers.size());
-        model.addAttribute("productCount", 0);
+        model.addAttribute("productCount", this.productService.getAllProducts().size());
         model.addAttribute("orderCount", 0);
         // Show last 5 users
         int size = allUsers.size();
