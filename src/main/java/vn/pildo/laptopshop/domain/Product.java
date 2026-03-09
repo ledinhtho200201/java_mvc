@@ -24,11 +24,11 @@ public class Product {
 
     @NotNull(message = "Giá không được để trống")
     @DecimalMin(value = "0", message = "Giá phải lớn hơn hoặc bằng 0")
-    private Double price;
+    private double price;
 
     @NotNull(message = "Số lượng không được để trống")
     @Min(value = 0, message = "Số lượng phải lớn hơn hoặc bằng 0")
-    private Long quantity;
+    private long quantity;
 
     @NotEmpty(message = "Nhà sản xuất không được để trống")
     private String factory;
@@ -43,75 +43,30 @@ public class Product {
 
     private String image;
 
-    public long getId() {
-        return id;
-    }
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public long getQuantity() { return quantity; }
+    public void setQuantity(long quantity) { this.quantity = quantity; }
 
-    public Double getPrice() {
-        return price;
-    }
+    public String getFactory() { return factory; }
+    public void setFactory(String factory) { this.factory = factory; }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
+    public String getTarget() { return target; }
+    public void setTarget(String target) { this.target = target; }
 
-    public Long getQuantity() {
-        return quantity;
-    }
+    public String getShortDesc() { return shortDesc; }
+    public void setShortDesc(String shortDesc) { this.shortDesc = shortDesc; }
 
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
+    public String getDetailDesc() { return detailDesc; }
+    public void setDetailDesc(String detailDesc) { this.detailDesc = detailDesc; }
 
-    public String getFactory() {
-        return factory;
-    }
-
-    public void setFactory(String factory) {
-        this.factory = factory;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    public String getShortDesc() {
-        return shortDesc;
-    }
-
-    public void setShortDesc(String shortDesc) {
-        this.shortDesc = shortDesc;
-    }
-
-    public String getDetailDesc() {
-        return detailDesc;
-    }
-
-    public void setDetailDesc(String detailDesc) {
-        this.detailDesc = detailDesc;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
 }
