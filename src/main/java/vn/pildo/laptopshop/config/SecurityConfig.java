@@ -40,6 +40,14 @@ public class SecurityConfig {
                 .successHandler(customSuccessHandler())
                 .permitAll()
             )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .accessDeniedPage("/access-denied")
+            )
             .csrf(csrf -> csrf.disable());
         return http.build();
     }

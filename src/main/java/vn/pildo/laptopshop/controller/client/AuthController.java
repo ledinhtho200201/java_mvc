@@ -61,4 +61,9 @@ public class AuthController {
     public String getLoginPage() {
         return "client/auth/login";
     }
+
+    @GetMapping("/access-denied")
+    public String getAccessDeniedPage() {
+        return "client/auth/403";
+    }
 }

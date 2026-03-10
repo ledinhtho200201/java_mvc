@@ -24,10 +24,15 @@ public class DashboardController {
     @GetMapping("/admin/dashboard")
     public String getDashboard(Model model) {
         List<User> allUsers = this.userService.getAllUsers();
+        long adminCount = allUsers.stream().filter(u -> "ADMIN".equals(u.getRole())).count();
+        long normalUserCount = allUsers.size() - adminCount;
+
         model.addAttribute("userCount", allUsers.size());
+        model.addAttribute("adminCount", adminCount);
+        model.addAttribute("normalUserCount", normalUserCount);
         model.addAttribute("productCount", this.productService.getAllProducts().size());
         model.addAttribute("orderCount", 0);
-        // Show last 5 users
+
         int size = allUsers.size();
         List<User> recentUsers = allUsers.subList(Math.max(0, size - 5), size);
         model.addAttribute("recentUsers", recentUsers);

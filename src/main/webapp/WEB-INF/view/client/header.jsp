@@ -76,9 +76,33 @@
                     <i class="bi bi-cart3 fs-5"></i>
                     <span class="badge">3</span>
                 </a>
-                <a href="/login" class="btn-login">
-                    <i class="bi bi-person-circle me-1"></i> Đăng nhập
-                </a>
+
+                <c:choose>
+                    <c:when test="${pageContext.request.userPrincipal != null}">
+                        <div class="dropdown">
+                            <button class="btn-login dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i> ${pageContext.request.userPrincipal.name}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                <li><a class="dropdown-item" href="/account"><i class="bi bi-person me-2"></i>Thông tin tài khoản</a></li>
+                                <li><a class="dropdown-item" href="/orders"><i class="bi bi-box-seam me-2"></i>Lịch sử mua hàng</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="/logout" class="m-0">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="/login" class="btn-login">
+                            <i class="bi bi-person-circle me-1"></i> Đăng nhập
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
         </div>

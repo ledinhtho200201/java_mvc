@@ -20,5 +20,9 @@
 
     <div class="sidebar-label">Hệ thống</div>
     <a href="#" class="sidebar-link"><i class="bi bi-gear"></i> Cài đặt</a>
-    <a href="#" class="sidebar-link"><i class="bi bi-box-arrow-left"></i> Đăng xuất</a>
+    <form method="POST" action="/logout" class="m-0">
+        <button type="submit" class="sidebar-link w-100 text-start border-0 bg-transparent" style="cursor:pointer;">
+            <i class="bi bi-box-arrow-left"></i> Đăng xuất
+        </button>
+    </form>
 </aside>
