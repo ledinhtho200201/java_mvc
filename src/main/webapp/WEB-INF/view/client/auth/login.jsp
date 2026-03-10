@@ -169,6 +169,12 @@
             </div>
         </c:if>
 
+        <c:if test="${param.expired != null}">
+            <div class="error-msg" style="background:#fff7ed;color:#ea580c;border-color:#fed7aa;">
+                <i class="bi bi-clock me-1"></i>Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại
+            </div>
+        </c:if>
+
         <c:if test="${param.logout != null}">
             <div class="success-msg">
                 <i class="bi bi-check-circle me-1"></i>Đăng xuất thành công

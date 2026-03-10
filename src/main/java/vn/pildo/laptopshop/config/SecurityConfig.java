@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -50,6 +51,12 @@ public class SecurityConfig {
                 .key("laptopshop-secret-key")
                 .tokenValiditySeconds(7 * 24 * 60 * 60)
                 .rememberMeParameter("remember-me")
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .invalidSessionUrl("/login?expired")
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false)
             )
             .exceptionHandling(ex -> ex
                 .accessDeniedPage("/access-denied")
