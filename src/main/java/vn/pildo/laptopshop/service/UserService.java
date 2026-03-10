@@ -94,6 +94,10 @@ public class UserService {
             System.out.println("User not found: " + id);
         }
     }
+
+    public User getUserByEmail(String email) {
+        return this.userRepository.findOneByEmail(email);
+    }
 }
 
 
