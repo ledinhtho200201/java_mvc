@@ -43,7 +43,13 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
+                .deleteCookies("JSESSIONID", "remember-me")
                 .permitAll()
+            )
+            .rememberMe(rememberMe -> rememberMe
+                .key("laptopshop-secret-key")
+                .tokenValiditySeconds(7 * 24 * 60 * 60)
+                .rememberMeParameter("remember-me")
             )
             .exceptionHandling(ex -> ex
                 .accessDeniedPage("/access-denied")
