@@ -16,43 +16,57 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import vn.pildo.laptopshop.domain.User;
+import vn.pildo.laptopshop.service.UserService;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
-  private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-  protected String determineTargetUrl(final Authentication authentication) {
-    Map<String, String> roleTargetUrlMap = new HashMap<>();
-    roleTargetUrlMap.put("ROLE_USER", "/");
-    roleTargetUrlMap.put("ROLE_ADMIN", "/admin/dashboard");
+    private final UserService userService;
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-    for (final GrantedAuthority grantedAuthority : authorities) {
-        String authorityName = grantedAuthority.getAuthority();
-        if(roleTargetUrlMap.containsKey(authorityName)) {
-            return roleTargetUrlMap.get(authorityName);
+    public CustomSuccessHandler(UserService userService) {
+        this.userService = userService;
+    }
+
+    protected String determineTargetUrl(final Authentication authentication) {
+        Map<String, String> roleTargetUrlMap = new HashMap<>();
+        roleTargetUrlMap.put("ROLE_USER", "/");
+        roleTargetUrlMap.put("ROLE_ADMIN", "/admin/dashboard");
+
+        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        for (final GrantedAuthority grantedAuthority : authorities) {
+            String authorityName = grantedAuthority.getAuthority();
+            if (roleTargetUrlMap.containsKey(authorityName)) {
+                return roleTargetUrlMap.get(authorityName);
+            }
         }
+        throw new IllegalStateException();
     }
 
-    throw new IllegalStateException();
-  }
-
-  protected void clearAuthenticationAttributes(HttpServletRequest request) {
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-        return;
+    protected void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) return;
+        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
-    session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-  }
 
-  @Override
-  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-    Authentication authentication) throws IOException, ServletException {
-    String targetUrl = determineTargetUrl(authentication);
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
 
-    if (response.isCommitted()) {
-      return;
+        User user = this.userService.getUserByEmail(authentication.getName());
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("fullName", user.getFullName());
+            session.setAttribute("avatar", user.getAvatar());
+            session.setAttribute("id", user.getId());
+            session.setAttribute("email", user.getEmail());
+            session.setAttribute("role", user.getRole());
+        }
+
+        String targetUrl = determineTargetUrl(authentication);
+        if (response.isCommitted()) return;
+        redirectStrategy.sendRedirect(request, response, targetUrl);
+        clearAuthenticationAttributes(request);
     }
-    redirectStrategy.sendRedirect(request, response, targetUrl);
-    clearAuthenticationAttributes(request);
-  }
 }
+

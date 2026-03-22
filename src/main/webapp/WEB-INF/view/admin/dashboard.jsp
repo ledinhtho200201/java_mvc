@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -77,7 +78,16 @@
         <div class="topbar-title">Dashboard <small class="ms-2" style="font-weight:400;color:#8a92a6;">/ Tổng quan</small></div>
         <div class="d-flex align-items-center gap-2">
             <span style="font-size:.85rem;color:#6b7080;">${sessionScope.fullName}</span>
-            <div class="avatar-circle">A</div>
+            <c:choose>
+                <c:when test="${not empty sessionScope.avatar}">
+                    <img src="/images/avatar/${sessionScope.avatar}"
+                         style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #e8ecf0;"
+                         alt="avatar"/>
+                </c:when>
+                <c:otherwise>
+                    <div class="avatar-circle">${fn:substring(sessionScope.fullName, 0, 1)}</div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 

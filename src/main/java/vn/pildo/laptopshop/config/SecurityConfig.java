@@ -6,24 +6,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import vn.pildo.laptopshop.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    private final UserService userService;
+
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
     }
 
     @Bean
     public AuthenticationSuccessHandler customSuccessHandler() {
-        return new CustomSuccessHandler();
+        return new CustomSuccessHandler(userService);
     }
 
     @Bean

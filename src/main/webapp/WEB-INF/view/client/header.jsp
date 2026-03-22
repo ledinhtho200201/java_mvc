@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!-- =============================================
      TOPBAR
@@ -80,8 +81,20 @@
                 <c:choose>
                     <c:when test="${pageContext.request.userPrincipal != null}">
                         <div class="dropdown">
-                            <button class="btn-login dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle me-1"></i> ${pageContext.request.userPrincipal.name}
+                            <button class="btn-login dropdown-toggle border-0 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.avatar}">
+                                        <img src="/images/avatar/${sessionScope.avatar}"
+                                             style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.4);"
+                                             alt="avatar"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;">
+                                            ${fn:substring(sessionScope.fullName, 0, 1)}
+                                        </span>
+                                    </c:otherwise>
+                                </c:choose>
+                                ${sessionScope.fullName}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
                                 <li><a class="dropdown-item" href="/account"><i class="bi bi-person me-2"></i>Thông tin tài khoản</a></li>
