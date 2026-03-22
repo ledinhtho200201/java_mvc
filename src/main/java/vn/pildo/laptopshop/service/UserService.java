@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import vn.pildo.laptopshop.domain.User;
+import vn.pildo.laptopshop.domain.dto.RegisterDTO;
 import vn.pildo.laptopshop.repository.UserRepository;
 
 import java.io.IOException;
@@ -97,6 +98,15 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return this.userRepository.findOneByEmail(email);
+    }
+
+    public User registerDTOtoUser(RegisterDTO registerDTO) {
+        User user = new User();
+        user.setFullName(registerDTO.getFirstName() + " " + registerDTO.getLastName());
+        user.setEmail(registerDTO.getEmail());
+        user.setPassword(this.hashPassword(registerDTO.getPassword()));
+        user.setRole("USER");
+        return user;
     }
 }
 

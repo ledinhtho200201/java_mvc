@@ -47,11 +47,7 @@ public class AuthController {
             return "client/auth/register";
         }
 
-        User user = new User();
-        user.setFullName(registerDTO.getFirstName() + " " + registerDTO.getLastName());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(this.userService.hashPassword(registerDTO.getPassword()));
-        user.setRole("USER");
+        User user = this.userService.registerDTOtoUser(registerDTO);
 
         this.userService.handleSaveUser(user);
         return "redirect:/login";
