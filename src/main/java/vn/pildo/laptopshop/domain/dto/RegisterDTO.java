@@ -2,8 +2,10 @@ package vn.pildo.laptopshop.domain.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import vn.pildo.laptopshop.service.validator.RegisterChecked;
+import vn.pildo.laptopshop.service.validator.StrongPassword;
 
+@RegisterChecked
 public class RegisterDTO {
 
     @NotEmpty(message = "Họ không được để trống")
@@ -17,7 +19,7 @@ public class RegisterDTO {
     private String email;
 
     @NotEmpty(message = "Mật khẩu không được để trống")
-    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
+    @StrongPassword
     private String password;
 
     @NotEmpty(message = "Vui lòng xác nhận mật khẩu")
