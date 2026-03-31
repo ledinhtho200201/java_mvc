@@ -17,15 +17,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import vn.pildo.laptopshop.domain.User;
+import vn.pildo.laptopshop.service.CartService;
 import vn.pildo.laptopshop.service.UserService;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserService userService;
+    private final CartService cartService;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public CustomSuccessHandler(UserService userService) {
+    public CustomSuccessHandler(UserService userService, CartService cartService) {
         this.userService = userService;
+        this.cartService = cartService;
     }
 
     protected String determineTargetUrl(final Authentication authentication) {
@@ -61,6 +64,8 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             session.setAttribute("id", user.getId());
             session.setAttribute("email", user.getEmail());
             session.setAttribute("role", user.getRole());
+            // Badge giỏ hàng: đếm từ DB
+            session.setAttribute("cartCount", cartService.countCartItems(user));
         }
 
         String targetUrl = determineTargetUrl(authentication);

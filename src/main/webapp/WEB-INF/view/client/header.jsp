@@ -73,9 +73,11 @@
 
             <!-- Cart & Login -->
             <div class="d-flex align-items-center gap-3">
-                <a href="#" class="cart-badge text-white text-decoration-none">
+                <a href="/cart" class="cart-badge text-white text-decoration-none">
                     <i class="bi bi-cart3 fs-5"></i>
-                    <span class="badge">3</span>
+                    <c:if test="${sessionScope.cartCount > 0}">
+                        <span class="badge">${sessionScope.cartCount}</span>
+                    </c:if>
                 </a>
 
                 <c:choose>

@@ -196,7 +196,12 @@
 
                 <div class="d-flex gap-3 mt-4">
                     <button class="btn-buy"><i class="bi bi-bag-check me-2"></i>Mua ngay</button>
-                    <button class="btn-cart-outline"><i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ</button>
+                    <form method="POST" action="/add-to-cart/${product.id}" class="m-0">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <button type="submit" class="btn-cart-outline">
+                            <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Features -->

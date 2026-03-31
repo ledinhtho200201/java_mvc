@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import vn.pildo.laptopshop.service.CartService;
 import vn.pildo.laptopshop.service.UserService;
 
 @Configuration
@@ -17,14 +18,16 @@ import vn.pildo.laptopshop.service.UserService;
 public class SecurityConfig {
 
     private final UserService userService;
+    private final CartService cartService;
 
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(UserService userService, CartService cartService) {
         this.userService = userService;
+        this.cartService = cartService;
     }
 
     @Bean
     public AuthenticationSuccessHandler customSuccessHandler() {
-        return new CustomSuccessHandler(userService);
+        return new CustomSuccessHandler(userService, cartService);
     }
 
     @Bean
@@ -33,6 +36,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
                 .requestMatchers("/", "/client/**", "/login", "/product/**", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/cart", "/cart/**", "/add-to-cart/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
