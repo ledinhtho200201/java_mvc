@@ -429,6 +429,35 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <!-- Pagination Reviews -->
+            <c:if test="${totalPages > 1}">
+                <nav aria-label="Review pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <c:if test="${currentPage > 1}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage - 1}" style="color:var(--highlight); border-radius:50%; margin:0 5px;">&laquo;</a>
+                            </li>
+                        </c:if>
+
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="?page=${i}" 
+                                   style="${i == currentPage ? 'background-color:var(--highlight); border-color:var(--highlight); color:white;' : 'color:var(--highlight);'} border-radius:50%; margin:0 5px;">
+                                    ${i}
+                                </a>
+                            </li>
+                        </c:forEach>
+
+                        <c:if test="${currentPage < totalPages}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage + 1}" style="color:var(--highlight); border-radius:50%; margin:0 5px;">&raquo;</a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </nav>
+            </c:if>
+
         </div>
 
     </div>

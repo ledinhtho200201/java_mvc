@@ -1,12 +1,12 @@
 package vn.pildo.laptopshop.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.pildo.laptopshop.domain.Product;
 import vn.pildo.laptopshop.domain.Review;
 import vn.pildo.laptopshop.repository.ReviewRepository;
-
-import java.util.List;
 
 @Service
 public class ReviewService {
@@ -21,7 +21,15 @@ public class ReviewService {
         return this.reviewRepository.save(review);
     }
 
-    public List<Review> getReviewsByProduct(Product product) {
-        return this.reviewRepository.findByProductOrderByCreatedAtDesc(product);
+    public Page<Review> getReviewsByProduct(Product product, Pageable pageable) {
+        return this.reviewRepository.findByProductOrderByCreatedAtDesc(product, pageable);
+    }
+
+    public double getAverageRating(Product product) {
+        return this.reviewRepository.getAverageRatingByProduct(product);
+    }
+
+    public long countReviews(Product product) {
+        return this.reviewRepository.countByProduct(product);
     }
 }

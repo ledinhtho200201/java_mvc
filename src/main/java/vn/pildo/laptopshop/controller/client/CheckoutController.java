@@ -13,6 +13,7 @@ import vn.pildo.laptopshop.domain.CartItem;
 import vn.pildo.laptopshop.domain.Order;
 import vn.pildo.laptopshop.domain.User;
 import vn.pildo.laptopshop.service.CartService;
+import vn.pildo.laptopshop.service.EmailService;
 import vn.pildo.laptopshop.service.OrderService;
 import vn.pildo.laptopshop.service.UserService;
 
@@ -24,13 +25,16 @@ public class CheckoutController {
     private final CartService cartService;
     private final OrderService orderService;
     private final UserService userService;
+    private final EmailService emailService;
 
     public CheckoutController(CartService cartService,
                               OrderService orderService,
-                              UserService userService) {
+                              UserService userService,
+                              EmailService emailService) {
         this.cartService = cartService;
         this.orderService = orderService;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     // ── Bước 2: Form thông tin giao hàng ──────────────────────────
@@ -69,6 +73,9 @@ public class CheckoutController {
 
         // Giỏ đã được clear → reset badge
         session.setAttribute("cartCount", 0);
+
+        // Gửi email xác nhận (chạy bất đồng bộ thì tốt hơn, nhưng ở đây có thể test thử)
+        this.emailService.sendOrderConfirmationEmail(user.getEmail(), order);
 
         // COD → thẳng tới trang thành công
         if ("COD".equals(paymentMethod)) {

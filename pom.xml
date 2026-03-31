@@ -89,12 +89,18 @@
 			<artifactId>spring-session-jdbc</artifactId>
 		</dependency>
 
-	</dependencies>
+                <!-- JavaMailSender for order confirmation emails -->
+                <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-mail</artifactId>
+                </dependency>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
+</dependencies>
+
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
