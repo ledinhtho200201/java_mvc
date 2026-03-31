@@ -89,6 +89,18 @@ public class OrderService {
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public void updateOrderStatus(long id, String status) {
+        Order order = getOrderById(id);
+        if (order != null) {
+            order.setStatus(status);
+            orderRepository.save(order);
+        }
+    }
+
     /** Xác nhận đã thanh toán (dùng cho COD hoặc sau khi verify chuyển khoản) */
     public void markAsPaid(long orderId) {
         Order order = getOrderById(orderId);

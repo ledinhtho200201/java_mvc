@@ -122,6 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <c:if test="${empty orders}">
                         <tr>
                             <td colspan="7">
                                 <div class="empty-state">
@@ -131,6 +132,33 @@
                                 </div>
                             </td>
                         </tr>
+                        </c:if>
+                        <c:forEach var="order" items="${orders}">
+                        <tr>
+                            <td><strong>${order.orderCode}</strong></td>
+                            <td>
+                                <div>${order.receiverName}</div>
+                                <div style="font-size: .75rem; color: #888;">${order.receiverPhone}</div>
+                            </td>
+                            <td>${order.orderDetails.size()} sản phẩm</td>
+                            <td><strong style="color: var(--accent);">${order.totalPrice}đ</strong></td>
+                            <td>
+                                <form action="/admin/order/update-status/${order.id}" method="POST" style="margin: 0;">
+                                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto; display: inline-block;">
+                                        <option value="PENDING_PAYMENT" ${order.status == 'PENDING_PAYMENT' ? 'selected' : ''}>Chờ thanh toán</option>
+                                        <option value="PROCESSING" ${order.status == 'PROCESSING' ? 'selected' : ''}>Đang xử lý</option>
+                                        <option value="SHIPPING" ${order.status == 'SHIPPING' ? 'selected' : ''}>Đang giao hàng</option>
+                                        <option value="COMPLETED" ${order.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                                        <option value="CANCELLED" ${order.status == 'CANCELLED' ? 'selected' : ''}>Đã huỷ</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>${order.formattedCreatedAt}</td>
+                            <td>
+                                <button class="btn btn-sm btn-light"><i class="bi bi-eye"></i></button>
+                            </td>
+                        </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
             </div>

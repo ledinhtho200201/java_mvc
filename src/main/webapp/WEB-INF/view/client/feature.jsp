@@ -236,30 +236,136 @@
 <!-- =============================================
      BRANDS
      ============================================= -->
-<section class="section-padding-sm" style="background:#fff; border-top:1px solid #eee;">
-    <div class="container">
-        <div class="text-center mb-4">
-            <div class="section-label">Thương hiệu uy tín</div>
-        </div>
-        <div class="row align-items-center justify-content-center g-4 text-center">
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.5rem; font-weight:800; color:#aaa; letter-spacing:-1px;">ASUS</div>
-            </div>
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.3rem; font-weight:700; color:#aaa;">Lenovo</div>
-            </div>
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.3rem; font-weight:700; color:#aaa; letter-spacing:-0.5px;">Apple</div>
-            </div>
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.3rem; font-weight:800; color:#aaa;">Dell</div>
-            </div>
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.3rem; font-weight:700; color:#aaa;">HP</div>
-            </div>
-            <div class="col-4 col-md-2">
-                <div style="font-size:1.3rem; font-weight:700; color:#aaa;">Acer</div>
-            </div>
-        </div>
+<section class="section-padding-sm" style="background:#fff; border-top:1px solid #eee; overflow-x: hidden;">
+    <div class="container text-center mb-4">
+        <div class="section-label">Thương hiệu uy tín</div>
     </div>
-</section>
+    <style>
+        .brand-ticker-wrap {
+            overflow: hidden;
+            position: relative;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, #fff 100%);
+            padding-top: 1rem;
+            padding-bottom: 2.5rem;
+        }
+            .brand-ticker-wrap::before, .brand-ticker-wrap::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 10%;
+                z-index: 2;
+                pointer-events: none;
+            }
+            .brand-ticker-wrap::before {
+                left: 0;
+                background: linear-gradient(to right, #fff, transparent);
+            }
+            .brand-ticker-wrap::after {
+                right: 0;
+                background: linear-gradient(to left, #fff, transparent);
+            }
+
+            .brand-ticker {
+                display: flex;
+                width: max-content;
+                animation: ticker 35s linear infinite;
+                will-change: transform;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                transform: translateZ(0);
+            }
+
+            .brand-ticker:hover {
+                animation-play-state: paused;
+            }
+
+            .brand-track {
+                display: flex;
+                gap: 5rem;
+                padding-right: 5rem; /* Match gap so it loops seamlessly */
+                will-change: transform;
+            }
+
+            @keyframes ticker {
+                0% { transform: translate3d(0, 0, 0); }
+                100% { transform: translate3d(-50%, 0, 0); }
+            }
+
+            .brand-item {
+                font-size: 1.8rem;
+                font-weight: 800;
+                color: #d1d1d1;
+                letter-spacing: -1px;
+                transition: transform 0.3s ease, color 0.3s ease;
+                cursor: pointer;
+                text-transform: uppercase;
+                user-select: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            /* Hover/Active states with brand colors */
+            .brand-item.b-asus:hover { color: #00539b; transform: scale(1.1); }
+            .brand-item.b-lenovo:hover { color: #e2231a; transform: scale(1.1); text-transform: capitalize;}
+            .brand-item.b-apple:hover { color: #555; transform: scale(1.1); text-transform: capitalize;}
+            .brand-item.b-dell:hover { color: #0076ce; transform: scale(1.1); }
+            .brand-item.b-hp:hover { color: #0096d6; transform: scale(1.1); }
+            .brand-item.b-acer:hover { color: #83b81a; transform: scale(1.1); text-transform: capitalize;}
+            .brand-item.b-msi:hover { color: #ed1c24; transform: scale(1.1); }
+        </style>
+
+        <div class="brand-ticker-wrap">
+            <div class="brand-ticker">
+                <!-- Group 1 -->
+                <div class="brand-track">
+                    <div class="brand-item b-asus">ASUS</div>
+                    <div class="brand-item b-lenovo">Lenovo</div>
+                    <div class="brand-item b-apple">Apple</div>
+                    <div class="brand-item b-dell">Dell</div>
+                    <div class="brand-item b-hp">HP</div>
+                    <div class="brand-item b-acer">Acer</div>
+                    <div class="brand-item b-msi">MSI</div>
+                </div>
+                
+                <!-- Group 2 -->
+                <div class="brand-track">
+                    <div class="brand-item b-asus">ASUS</div>
+                    <div class="brand-item b-lenovo">Lenovo</div>
+                    <div class="brand-item b-apple">Apple</div>
+                    <div class="brand-item b-dell">Dell</div>
+                    <div class="brand-item b-hp">HP</div>
+                    <div class="brand-item b-acer">Acer</div>
+                    <div class="brand-item b-msi">MSI</div>
+                </div>
+
+                <!-- Group 3 (Extra buffer for ultra wide screens) -->
+                <div class="brand-track">
+                    <div class="brand-item b-asus">ASUS</div>
+                    <div class="brand-item b-lenovo">Lenovo</div>
+                    <div class="brand-item b-apple">Apple</div>
+                    <div class="brand-item b-dell">Dell</div>
+                    <div class="brand-item b-hp">HP</div>
+                    <div class="brand-item b-acer">Acer</div>
+                    <div class="brand-item b-msi">MSI</div>
+                </div>
+
+                <!-- Group 4 -->
+                <div class="brand-track">
+                    <div class="brand-item b-asus">ASUS</div>
+                    <div class="brand-item b-lenovo">Lenovo</div>
+                    <div class="brand-item b-apple">Apple</div>
+                    <div class="brand-item b-dell">Dell</div>
+                    <div class="brand-item b-hp">HP</div>
+                    <div class="brand-item b-acer">Acer</div>
+                    <div class="brand-item b-msi">MSI</div>
+                </div>
+            </div>
+        </div>
+

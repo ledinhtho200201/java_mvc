@@ -125,6 +125,98 @@
             font-size: .84rem;
         }
         .btn-pay:hover { background: #c73652; color: #fff; }
+
+        /* Tracking Stepper */
+        .tracking-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, .07);
+            padding: 2.2rem 1.5rem 1.5rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+        .track-stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .track-stepper::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 12.5%;
+            right: 12.5%;
+            height: 6px;
+            background: #f0f0f5;
+            z-index: 1;
+            border-radius: 3px;
+        }
+        .track-progress {
+            position: absolute;
+            top: 24px;
+            left: 12.5%;
+            height: 6px;
+            background: var(--highlight, #e94560);
+            z-index: 2;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+            border-radius: 3px;
+        }
+        .truck-moving {
+            position: absolute;
+            top: -24px;
+            right: -15px;
+            font-size: 1.8rem;
+            color: var(--highlight, #e94560);
+            background: #fff;
+            z-index: 5;
+            border-radius: 50%;
+            animation: bump 0.4s infinite alternate;
+            padding: 0 2px;
+        }
+        @keyframes bump {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+        .track-step {
+            width: 25%;
+            text-align: center;
+            position: relative;
+            z-index: 3;
+        }
+        .track-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #f0f0f5;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #ccc;
+            margin: 0 auto 0.6rem;
+            transition: all 0.4s;
+        }
+        .track-step.done .track-icon, .track-step.current .track-icon {
+            border-color: var(--highlight, #e94560);
+            color: var(--highlight, #e94560);
+        }
+        .track-step.done .track-icon {
+            background: var(--highlight, #e94560);
+            color: #fff;
+        }
+        .track-label {
+            font-size: .85rem;
+            font-weight: 600;
+            color: #999;
+        }
+        .track-step.done .track-label, .track-step.current .track-label {
+            color: var(--primary, #2b2b2b);
+        }
+        .track-step.current .track-icon {
+            box-shadow: 0 0 0 5px rgba(233, 69, 96, 0.15);
+        }
     </style>
 </head>
 <body>
@@ -149,6 +241,90 @@
             </c:choose>
         </span>
     </div>
+
+    <!-- TÍNH TOÁN KHOẢNG TRẠNG THÁI -->
+    <c:set var="pWidth" value="0%"/>
+    <c:set var="stepNum" value="1"/>
+    <c:choose>
+        <c:when test="${order.status == 'COMPLETED'}">
+            <c:set var="pWidth" value="75%"/>
+            <c:set var="stepNum" value="4"/>
+        </c:when>
+        <c:when test="${order.status == 'SHIPPING'}">
+            <c:set var="pWidth" value="50%"/>
+            <c:set var="stepNum" value="3"/>
+        </c:when>
+        <c:when test="${order.status == 'PROCESSING'}">
+            <c:set var="pWidth" value="25%"/>
+            <c:set var="stepNum" value="2"/>
+        </c:when>
+        <c:when test="${order.status == 'PENDING_PAYMENT'}">
+            <c:set var="pWidth" value="0%"/>
+            <c:set var="stepNum" value="1"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="stepNum" value="-1"/>
+        </c:otherwise>
+    </c:choose>
+
+    <!-- TRACKING STEPPER COMPONENT -->
+    <c:if test="${stepNum != -1}">
+        <div class="tracking-card">
+            <div class="track-stepper">
+                <div class="track-progress" id="truckProgress" style="width: 0%;" data-target="${pWidth}">
+                    <i class="bi bi-truck truck-moving"></i>
+                </div>
+                
+                <div class="track-step ${stepNum >= 1 ? 'done' : ''} ${stepNum == 1 ? 'current' : ''}">
+                    <div class="track-icon"><i class="bi bi-receipt"></i></div>
+                    <div class="track-label">Đơn hàng đã đặt</div>
+                </div>
+                <div class="track-step ${stepNum >= 2 ? 'done' : ''} ${stepNum == 2 ? 'current' : ''}">
+                    <div class="track-icon"><i class="bi bi-box-seam"></i></div>
+                    <div class="track-label">Đã xác nhận</div>
+                </div>
+                <div class="track-step ${stepNum >= 3 ? 'done' : ''} ${stepNum == 3 ? 'current' : ''}">
+                    <div class="track-icon"><i class="bi bi-truck"></i></div>
+                    <div class="track-label">Đang giao hàng</div>
+                </div>
+                <div class="track-step ${stepNum >= 4 ? 'done' : ''} ${stepNum == 4 ? 'current' : ''}">
+                    <div class="track-icon"><i class="bi bi-house-check"></i></div>
+                    <div class="track-label">Giao thành công</div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4" style="font-size: .95rem; color: #666;">
+                <c:choose>
+                    <c:when test="${stepNum == 1}"><strong>Chờ thanh toán:</strong> Bạn vui lòng hoàn tất phần thanh toán để hệ thống chuẩn bị gửi hàng nhé!</c:when>
+                    <c:when test="${stepNum == 2}"><strong>Tin vui!</strong> Đơn hàng đã được xác nhận. Gói hàng đang được thao tác đóng gói để vận chuyển đi.</c:when>
+                    <c:when test="${stepNum == 3}"><strong>Ting ting!</strong> Xe tải đang trên đường giao hàng đến bạn. Vui lòng chú ý điện thoại nhé!</c:when>
+                    <c:when test="${stepNum == 4}"><strong>Thành công!</strong> Cảm ơn bạn đã tin tưởng và mua sắm tại LaptopShop 🎉.</c:when>
+                </c:choose>
+            </div>
+        </div>
+    </c:if>
+
+    <!-- LIVE TRACKING MAP (Chỉ hiện khi đang giao hàng) -->
+    <c:if test="${stepNum == 3}">
+        <div class="tracking-card" style="padding: 1.5rem;">
+            <h6 style="font-weight: 800; color: var(--primary); margin-bottom: 1.2rem; font-size: 1.05rem;">
+                <i class="bi bi-geo-alt-fill me-2" style="color: var(--highlight);"></i>Bản đồ hành trình trực tiếp
+            </h6>
+            <div class="d-flex justify-content-between mb-3 flex-wrap gap-2" style="font-size: .88rem;">
+                <span class="d-inline-flex align-items-center bg-light px-3 py-2 rounded-3" style="border: 1px solid #eee;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="30" height="30" class="me-2" alt="shipper">
+                    <div>
+                        <div style="font-weight: 700; color: var(--primary); line-height: 1;">Shipper: Nguyễn Văn A</div>
+                        <div style="font-size: .75rem; color: #888; margin-top: 4px;">0987.654.321 &bull; 29A1-123.45</div>
+                    </div>
+                </span>
+                <span class="d-inline-flex align-items-center text-success" style="font-weight: 700; background: #e8f5e9; padding: 0 1rem; border-radius: 20px;">
+                    <i class="bi bi-stopwatch me-1" style="font-size: 1.2rem;"></i> Dự kiến đến trong: 15 phút
+                </span>
+            </div>
+            <div id="deliveryMap" style="height: 380px; border-radius: 12px; z-index: 1; border: 1px solid #ddd; box-shadow: inset 0 2px 5px rgba(0,0,0,.05);"></div>
+        </div>
+    </c:if>
 
     <div class="card-box">
         <div class="card-head"><i class="bi bi-geo-alt-fill"></i>Thong tin giao hang</div>
@@ -216,5 +392,84 @@
 
 <%@ include file="/WEB-INF/view/client/footer.jsp" %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Thư viện bản đồ Leaflet (Track Map) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Hiệu ứng xe tải chạy trên thanh Tracking
+        setTimeout(function() {
+            var tp = document.getElementById('truckProgress');
+            if (tp) {
+                tp.style.width = tp.getAttribute('data-target');
+            }
+        }, 200);
+
+        // 2. Khởi tạo Bản đồ nếu Element tồn tại
+        var mapEl = document.getElementById('deliveryMap');
+        if (mapEl) {
+            // Tọa độ giả định
+            var shopPos = [21.028511, 105.804817];
+            var homePos = [21.012345, 105.812345];
+            var shipperPos = [21.020000, 105.808000];
+
+            // Khởi tạo map
+            var map = L.map('deliveryMap', { scrollWheelZoom: false }).setView(shipperPos, 14);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Icon tuỳ chỉnh
+            var shopIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png',
+                iconSize: [36, 36], iconAnchor: [18, 36]
+            });
+            var homeIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/25/25694.png',
+                iconSize: [32, 32], iconAnchor: [16, 32]
+            });
+            var shipperIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/411/411763.png',
+                iconSize: [46, 46], iconAnchor: [23, 23]
+            });
+
+            // Gắn Marker lên map
+            L.marker(shopPos, {icon: shopIcon}).addTo(map).bindPopup("<b>LaptopShop Store</b><br/>Kho hàng");
+            L.marker(homePos, {icon: homeIcon}).addTo(map).bindPopup("<b>Nơi nhận</b><br/>${order.receiverAddress}");
+            
+            var shipperMarker = L.marker(shipperPos, {icon: shipperIcon, zIndexOffset: 1000})
+                .addTo(map)
+                .bindPopup("<div style='text-align:center;'><b>Tài xế đang di chuyển</b><br/><span style='color:var(--highlight)'>Sắp tới nơi rồi!</span></div>")
+                .openPopup();
+
+            // Vẽ đường đi (Polyline) dashed
+            var latlngs = [
+                shopPos,
+                [21.024000, 105.806000],
+                shipperPos,
+                [21.016000, 105.810000],
+                homePos
+            ];
+            var polyline = L.polyline(latlngs, {
+                color: '#e94560', 
+                dashArray: '6, 8', 
+                weight: 4
+            }).addTo(map);
+
+            // Auto zoom để nhìn thấy toàn bộ lộ trình
+            map.fitBounds(polyline.getBounds(), {padding: [40, 40]});
+
+            // Hiệu ứng di chuyển nhỏ (giả lập live tracking)
+            setInterval(function() {
+                shipperPos[0] -= 0.000015;
+                shipperPos[1] += 0.000015;
+                shipperMarker.setLatLng(shipperPos);
+            }, 800);
+        }
+    });
+</script>
 </body>
 </html>
