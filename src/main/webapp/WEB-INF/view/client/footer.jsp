@@ -106,3 +106,68 @@
 
     </div>
 </footer>
+
+<!-- WebSocket & Realtime Notification Setup -->
+<c:if test="${pageContext.request.userPrincipal != null}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    var currentUserEmail = "${pageContext.request.userPrincipal.name}";
+    var socket = new SockJS('/ws');
+    var stompClient = Stomp.over(socket);
+    // Disable console logging for STOMP to keep it clean, optional
+    stompClient.debug = null; 
+
+    stompClient.connect({}, function (frame) {
+        // Subscribe to global order updates
+        stompClient.subscribe('/topic/order-updates', function (payload) {
+            var data = payload.body;
+            // Format expected: "userEmail|Message text"
+            var parts = data.split("|");
+            
+            if (parts.length === 2) {
+                var targetEmail = parts[0];
+                var notificationMsg = parts[1];
+                
+                // Only show toast if this notification is for this user
+                if (targetEmail === currentUserEmail) {
+                    showRealtimeToast(notificationMsg);
+                }
+            }
+        });
+    });
+
+    function showRealtimeToast(message) {
+        // This reuses the logic from your product-detail / cart toasts
+        var wrap = document.getElementById('toastWrap');
+        if(!wrap) {
+            wrap = document.createElement('div');
+            wrap.id = 'toastWrap';
+            wrap.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            wrap.style.zIndex = '9999';
+            document.body.appendChild(wrap);
+        }
+
+        var toastId = 'toast-' + Date.now();
+        var toastHtml = `
+            <div id="\${toastId}" class="toast show" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius:10px; border-left: 5px solid #28a745;">
+                <div class="toast-header border-0 pb-0">
+                    <i class="bi bi-bell-fill text-success me-2"></i>
+                    <strong class="me-auto text-success">Thông báo Đơn Hàng</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body pt-1 pb-3" style="font-size: 1rem;">
+                    \${message}
+                </div>
+            </div>
+        `;
+        
+        wrap.insertAdjacentHTML('beforeend', toastHtml);
+
+        setTimeout(function() {
+            var t = document.getElementById(toastId);
+            if (t) t.remove();
+        }, 6000);
+    }
+</script>
+</c:if>

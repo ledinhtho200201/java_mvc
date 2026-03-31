@@ -1,5 +1,6 @@
 package vn.pildo.laptopshop.controller.admin;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, SimpMessagingTemplate messagingTemplate) {
         this.orderService = orderService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping("/admin/order")
@@ -31,6 +34,15 @@ public class OrderController {
     @PostMapping("/admin/order/update-status/{id}")
     public String updateOrderStatus(@PathVariable long id, @RequestParam("status") String status) {
         orderService.updateOrderStatus(id, status);
+        
+        Order order = orderService.getOrderById(id);
+        if(order != null && order.getUser() != null) {
+            String message = "Đơn hàng #" + id + " \u0111\u00e3 chuy\u1ec3n sang tr\u1ea1ng th\u00e1i: " + status;
+            // Send payload to specific user via generalized topic
+            // In real app, consider using convertAndSendToUser
+            messagingTemplate.convertAndSend("/topic/order-updates", order.getUser().getEmail() + "|" + message);
+        }
+
         return "redirect:/admin/order";
     }
 }
