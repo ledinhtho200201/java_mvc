@@ -36,7 +36,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
                 .requestMatchers("/", "/client/**", "/login", "/product/**", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/cart", "/cart/**", "/add-to-cart/**", "/buy-now/**", "/api/**").authenticated()
+                .requestMatchers("/cart", "/cart/**", "/add-to-cart/**", "/buy-now/**", "/api/**",
+                                 "/checkout", "/payment/**", "/order-success/**", "/orders").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
