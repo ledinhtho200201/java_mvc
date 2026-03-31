@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -304,6 +305,131 @@
                 <p>${product.detailDesc}</p>
             </div>
         </c:if>
+
+        <!-- Reviews Section -->
+        <style>
+            .star-rating {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: flex-end;
+                gap: 5px;
+            }
+            .star-rating input {
+                display: none;
+            }
+            .star-rating label {
+                font-size: 1.5rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.2s ease;
+            }
+            .star-rating label:hover,
+            .star-rating label:hover ~ label,
+            .star-rating input:checked ~ label {
+                color: #ffc107;
+            }
+            .review-item:last-child {
+                border-bottom: none !important;
+            }
+        </style>
+        <div class="reviews-section mt-5" style="background:#fff; border-radius:12px; padding:2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+            <div class="d-flex align-items-center mb-4 gap-3">
+                <h4 class="m-0"><i class="bi bi-star-fill text-warning me-2"></i>Đánh giá sản phẩm</h4>
+                <c:if test="${not empty reviews}">
+                    <span class="badge bg-light text-dark border px-3 py-2" style="font-size:1rem;">
+                        <fmt:formatNumber value="${averageRating}" maxFractionDigits="1" /> / 5.0
+                    </span>
+                    <span class="text-muted">(${fn:length(reviews)} đánh giá)</span>
+                </c:if>
+            </div>
+
+            <c:choose>
+                <c:when test="${pageContext.request.userPrincipal != null}">
+                    <div class="review-form-box p-4 mb-4 rounded" style="background:var(--bg-color); border: 1px solid #eaeaea;">
+                        <h6 class="mb-3">Gửi đánh giá của bạn</h6>
+                        <form action="/review/add" method="post">
+                            <input type="hidden" name="productId" value="${product.id}" />
+                            
+                            <div class="mb-3">
+                                <label class="form-label d-block text-muted small">Đánh giá sao:</label>
+                                <div class="star-rating">
+                                    <input type="radio" id="star5" name="rating" value="5" required />
+                                    <label for="star5" title="5 sao"><i class="bi bi-star-fill"></i></label>
+                                    
+                                    <input type="radio" id="star4" name="rating" value="4" />
+                                    <label for="star4" title="4 sao"><i class="bi bi-star-fill"></i></label>
+                                    
+                                    <input type="radio" id="star3" name="rating" value="3" />
+                                    <label for="star3" title="3 sao"><i class="bi bi-star-fill"></i></label>
+                                    
+                                    <input type="radio" id="star2" name="rating" value="2" />
+                                    <label for="star2" title="2 sao"><i class="bi bi-star-fill"></i></label>
+                                    
+                                    <input type="radio" id="star1" name="rating" value="1" />
+                                    <label for="star1" title="1 sao"><i class="bi bi-star-fill"></i></label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <textarea class="form-control focus-ring" name="content" rows="3" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..." required style="border-radius:10px; resize:none;"></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary px-4" style="border-radius:20px; background:var(--highlight); border:none;">
+                                    <i class="bi bi-send me-2"></i>Gửi đánh giá
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-secondary text-center mb-4 border-0" style="border-radius:12px;">
+                         Vui lòng <a href="/login" class="fw-bold text-decoration-none" style="color:var(--highlight)">Đăng nhập</a> để gửi đánh giá cho sản phẩm này.
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+            <!-- Review List -->
+            <div class="review-list">
+                <c:choose>
+                    <c:when test="${not empty reviews}">
+                        <c:forEach var="review" items="${reviews}">
+                            <div class="review-item d-flex gap-3 py-4 border-bottom">
+                                <div class="review-avatar">
+                                    <div style="width:45px; height:45px; background:var(--highlight); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem;">
+                                        ${fn:substring(review.user.fullName, 0, 1)}
+                                    </div>
+                                </div>
+                                <div class="review-content flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <b class="user-name m-0" style="font-size:1.05rem;">${review.user.fullName}</b>
+                                        <small class="text-muted d-flex align-items-center gap-1">
+                                            <i class="bi bi-clock"></i> ${review.formattedDate}
+                                        </small>
+                                    </div>
+                                    <div class="user-rating mb-2" style="color:#ffc107; font-size:0.9rem;">
+                                        <c:forEach begin="1" end="${review.rating}">
+                                            <i class="bi bi-star-fill"></i>
+                                        </c:forEach>
+                                        <c:forEach begin="${review.rating + 1}" end="5">
+                                            <i class="bi bi-star" style="color:#ddd;"></i>
+                                        </c:forEach>
+                                    </div>
+                                    <p class="m-0" style="color:#444; line-height:1.6;">
+                                        <c:out value="${review.content}" />
+                                    </p>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-chat-square-text" style="font-size:3rem; opacity:0.3;"></i>
+                            <p class="mt-3">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
 
     </div>
 </section>
