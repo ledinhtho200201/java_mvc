@@ -80,6 +80,11 @@ public class Order {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    public String getFormattedCreatedAt() {
+        if (this.createdAt == null) return "";
+        return this.createdAt.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
+    }
+
     public List<OrderDetail> getOrderDetails() { return orderDetails; }
     public void setOrderDetails(List<OrderDetail> orderDetails) { this.orderDetails = orderDetails; }
 }

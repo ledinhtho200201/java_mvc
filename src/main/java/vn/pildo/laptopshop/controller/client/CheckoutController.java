@@ -86,6 +86,10 @@ public class CheckoutController {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null) return "redirect:/";
+        User user = userService.getUserByEmail(auth.getName());
+        if (user == null || order.getUser() == null || order.getUser().getId() != user.getId()) {
+            return "redirect:/orders";
+        }
 
         model.addAttribute("order", order);
         return "client/payment";
@@ -95,6 +99,12 @@ public class CheckoutController {
     @PostMapping("/payment/{orderId}/confirm")
     public String confirmPayment(@PathVariable long orderId, Authentication auth) {
         if (auth == null || !auth.isAuthenticated()) return "redirect:/login";
+
+        Order order = orderService.getOrderById(orderId);
+        User user = userService.getUserByEmail(auth.getName());
+        if (order == null || user == null || order.getUser() == null || order.getUser().getId() != user.getId()) {
+            return "redirect:/orders";
+        }
 
         orderService.markAsPaid(orderId);
         return "redirect:/order-success/" + orderId;
@@ -107,6 +117,10 @@ public class CheckoutController {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null) return "redirect:/";
+        User user = userService.getUserByEmail(auth.getName());
+        if (user == null || order.getUser() == null || order.getUser().getId() != user.getId()) {
+            return "redirect:/orders";
+        }
 
         model.addAttribute("order", order);
         return "client/order-success";
