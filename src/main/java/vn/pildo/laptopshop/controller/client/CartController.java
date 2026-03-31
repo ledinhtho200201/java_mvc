@@ -1,6 +1,8 @@
 package vn.pildo.laptopshop.controller.client;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -8,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -53,6 +56,59 @@ public class CartController {
         model.addAttribute("suggestedProducts", suggestedProducts);
 
         return "client/cart";
+    }
+
+    // ----------------------------------------------------------------
+    // AJAX: Thêm vào giỏ — trả về JSON, không redirect
+    // ----------------------------------------------------------------
+    @PostMapping("/api/add-to-cart/{productId}")
+    @ResponseBody
+    public Map<String, Object> addToCartAjax(@PathVariable long productId,
+                                             Authentication auth,
+                                             HttpSession session) {
+        Map<String, Object> res = new HashMap<>();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            res.put("success", false);
+            res.put("redirect", "/login");
+            return res;
+        }
+
+        User user = userService.getUserByEmail(auth.getName());
+        Product product = productService.getProductById(productId);
+
+        if (product != null) {
+            cartService.addToCart(user, product);
+            long count = cartService.countCartItems(user);
+            session.setAttribute("cartCount", count);
+            res.put("success", true);
+            res.put("cartCount", count);
+            res.put("productName", product.getName());
+        } else {
+            res.put("success", false);
+        }
+        return res;
+    }
+
+    // ----------------------------------------------------------------
+    // Mua ngay: thêm vào giỏ rồi chuyển thẳng tới trang giỏ hàng
+    // ----------------------------------------------------------------
+    @PostMapping("/buy-now/{productId}")
+    public String buyNow(@PathVariable long productId,
+                         Authentication auth,
+                         HttpSession session) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        User user = userService.getUserByEmail(auth.getName());
+        Product product = productService.getProductById(productId);
+
+        if (product != null) {
+            cartService.addToCart(user, product);
+            session.setAttribute("cartCount", cartService.countCartItems(user));
+        }
+        return "redirect:/cart";
     }
 
     // ----------------------------------------------------------------

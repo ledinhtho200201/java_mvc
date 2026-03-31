@@ -713,7 +713,6 @@
                                 <div class="cart-card-header">
                                     <h5><i class="bi bi-cart3 me-2 text-highlight"></i>Giỏ hàng (<span id="totalItems">${fn:length(cartItems)}</span> sản phẩm)</h5>
                                     <form method="POST" action="/cart/clear" class="m-0">
-                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                         <button type="submit" class="btn-clear-cart"
                                                 onclick="return confirm('Xóa toàn bộ giỏ hàng?')">
                                             <i class="bi bi-trash3"></i> Xóa tất cả
@@ -776,7 +775,6 @@
 
                                     <!-- Delete -->
                                     <form method="POST" action="/cart/delete/${item.id}" class="m-0">
-                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                         <button type="submit" class="btn-delete-item" title="Xóa sản phẩm">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
@@ -814,7 +812,6 @@
                                             </div>
                                         </div>
                                         <form method="POST" action="/cart/add/${sp.id}" class="m-0">
-                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                             <button type="submit" class="btn-suggest-add">
                                                 <i class="bi bi-cart-plus me-1"></i>Thêm
                                             </button>

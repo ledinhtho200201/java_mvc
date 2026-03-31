@@ -127,10 +127,60 @@
             font-size: 1rem;
             font-weight: 600;
             transition: all 0.3s;
+            cursor: pointer;
         }
         .btn-cart-outline:hover {
             background: var(--primary);
             color: #fff;
+        }
+        .btn-cart-outline.added {
+            background: #28a745;
+            border-color: #28a745;
+            color: #fff;
+        }
+
+        /* Toast */
+        .cart-toast-wrap {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .cart-toast {
+            background: #1a1a2e;
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.9rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            min-width: 260px;
+            animation: slideIn 0.3s ease;
+        }
+        .cart-toast .toast-icon {
+            width: 36px;
+            height: 36px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .cart-toast .toast-text { font-size: 0.88rem; line-height: 1.4; }
+        .cart-toast .toast-text strong { display: block; font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0);    opacity: 1; }
+            to   { transform: translateX(120%); opacity: 0; }
         }
     </style>
 </head>
@@ -194,15 +244,27 @@
                     </div>
                 </c:if>
 
-                <div class="d-flex gap-3 mt-4">
-                    <button class="btn-buy"><i class="bi bi-bag-check me-2"></i>Mua ngay</button>
-                    <form method="POST" action="/add-to-cart/${product.id}" class="m-0">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <button type="submit" class="btn-cart-outline">
-                            <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+
+                    <%-- Mua ngay: POST thường → redirect /cart --%>
+                    <form method="POST" action="/buy-now/${product.id}" class="m-0">
+                        <button type="submit" class="btn-buy">
+                            <i class="bi bi-bag-check me-2"></i>Mua ngay
                         </button>
                     </form>
+
+                    <%-- Thêm vào giỏ: AJAX → toast, badge tăng, không reload --%>
+                    <button type="button" class="btn-cart-outline"
+                            id="btnAddCart"
+                            data-product-id="${product.id}"
+                            data-product-name="${product.name}">
+                        <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                    </button>
+
                 </div>
+
+                <%-- Toast container --%>
+                <div class="cart-toast-wrap" id="toastWrap"></div>
 
                 <!-- Features -->
                 <div class="row g-3 mt-3">
@@ -249,5 +311,85 @@
 <%@ include file="/WEB-INF/view/client/footer.jsp" %>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ── Add to cart AJAX ──────────────────────────────────────────────
+    document.getElementById('btnAddCart').addEventListener('click', function () {
+        const btn       = this;
+        const productId = btn.dataset.productId;
+        const name      = btn.dataset.productName;
+
+        // Loading state
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang thêm...';
+
+        fetch('/api/add-to-cart/' + productId, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+                if (data.success) {
+                    // Cập nhật badge
+                    updateCartBadge(data.cartCount);
+
+                    // Trạng thái nút: check xanh 1.5s rồi về bình thường
+                    btn.innerHTML = '<i class="bi bi-check-lg me-2"></i>Đã thêm';
+                    btn.classList.add('added');
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ';
+                        btn.classList.remove('added');
+                        btn.disabled = false;
+                    }, 1500);
+
+                    // Hiện toast
+                    showCartToast(name, data.cartCount);
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = '<i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ';
+                btn.disabled = false;
+            });
+    });
+
+    function updateCartBadge(count) {
+        const badge = document.querySelector('.cart-badge .badge');
+        if (count > 0) {
+            if (badge) {
+                badge.textContent = count;
+            } else {
+                const icon = document.querySelector('.cart-badge');
+                if (icon) {
+                    const b = document.createElement('span');
+                    b.className = 'badge';
+                    b.textContent = count;
+                    icon.appendChild(b);
+                }
+            }
+        }
+    }
+
+    function showCartToast(productName, cartCount) {
+        const wrap = document.getElementById('toastWrap');
+        const toast = document.createElement('div');
+        toast.className = 'cart-toast';
+        toast.innerHTML =
+            '<div class="toast-icon"><i class="bi bi-check-lg"></i></div>' +
+            '<div class="toast-text">' +
+                '<strong>Đã thêm vào giỏ hàng</strong>' +
+                productName + ' · Giỏ hàng: <b>' + cartCount + '</b> sản phẩm' +
+            '</div>' +
+            '<a href="/cart" style="color:#e94560;font-size:0.8rem;white-space:nowrap;text-decoration:none;margin-left:auto;padding-left:0.8rem;">' +
+                'Xem giỏ →' +
+            '</a>';
+        wrap.appendChild(toast);
+
+        // Tự động ẩn sau 3s
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
 </body>
 </html>

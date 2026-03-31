@@ -24,9 +24,12 @@ public class CartService {
         return cartItemRepository.findByUser(user);
     }
 
-    /** Đếm tổng số sản phẩm trong giỏ (dùng cho badge) */
+    /** Tổng số lượng sản phẩm trong giỏ (dùng cho badge) */
     public long countCartItems(User user) {
-        return cartItemRepository.countByUser(user);
+        return cartItemRepository.findByUser(user)
+                .stream()
+                .mapToLong(CartItem::getQuantity)
+                .sum();
     }
 
     /** Tổng tiền */

@@ -180,7 +180,6 @@
                                     </span>
                                 </div>
                                 <form method="POST" action="/add-to-cart/${product.id}" class="m-0">
-                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                     <button type="submit" class="btn-add-cart">
                                         <i class="bi bi-cart-plus"></i>
                                     </button>
