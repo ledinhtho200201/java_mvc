@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import vn.pildo.laptopshop.service.CartService;
+import vn.pildo.laptopshop.service.CustomOAuth2UserService;
 import vn.pildo.laptopshop.service.UserService;
 
 @Configuration
@@ -19,10 +20,12 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final CartService cartService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
-    public SecurityConfig(UserService userService, CartService cartService) {
+    public SecurityConfig(UserService userService, CartService cartService, CustomOAuth2UserService customOAuth2UserService) {
         this.userService = userService;
         this.cartService = cartService;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
 
     @Bean
@@ -46,6 +49,11 @@ public class SecurityConfig {
                 .failureUrl("/login?error")
                 .successHandler(customSuccessHandler())
                 .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                .successHandler(customSuccessHandler())
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")

@@ -224,6 +224,12 @@
         </form>
 
         <div class="divider">hoặc</div>
+
+        <!-- OAUTH2 / KEYCLOAK LOGIN BUTTON -->
+        <a href="/oauth2/authorization/keycloak" class="btn btn-outline-dark w-100" style="border-radius: 10px; font-weight: 600;">
+            <i class="bi bi-shield-lock me-2"></i> Đăng nhập với Keycloak
+        </a>
+
     </div>
 
     <div class="login-footer">

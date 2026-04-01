@@ -11,6 +11,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +44,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
                 return roleTargetUrlMap.get(authorityName);
             }
         }
-        throw new IllegalStateException();
+        return "/";
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
@@ -55,8 +56,15 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+            
+        String email = "";
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            email = ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttribute("email");
+        } else {
+            email = authentication.getName();
+        }
 
-        User user = this.userService.getUserByEmail(authentication.getName());
+        User user = this.userService.getUserByEmail(email);
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("fullName", user.getFullName());
@@ -64,7 +72,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             session.setAttribute("id", user.getId());
             session.setAttribute("email", user.getEmail());
             session.setAttribute("role", user.getRole());
-            // Badge giỏ hàng: đếm từ DB
+            
             session.setAttribute("cartCount", cartService.countCartItems(user));
         }
 
